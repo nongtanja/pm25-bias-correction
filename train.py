@@ -3,6 +3,7 @@ import os
 import pandas as pd
 import numpy as np
 import torch
+import torch.nn as nn
 import joblib
 from torch.utils.data import DataLoader
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
@@ -128,7 +129,7 @@ def main(args):
         optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
         criterion = nn.MSELoss()
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=5)
-        early_stopping = EarlyStopping(patience=15, delta=1e-5)
+        early_stopping = EarlyStopping(patience=10, delta=1e-5)
         
         for epoch in range(args.epochs):
             train_loss = train_one_epoch(model, train_loader, optimizer, criterion, device, edge_index, edge_attr)
@@ -190,7 +191,7 @@ if __name__ == "__main__":
     # Graph structure args
     parser.add_argument('--k_gnn', type=int, default=7, help="k-neighbors for GNN graph structure")
     parser.add_argument('--alpha_gnn', type=float, default=0.3, help="Alpha for combining dist/feature similarity in GNN graph")
-    parser.add_argument('--k_pm25', type=int, default=5, help="k-neighbors for PM2.5 neighbor feature engineering")
+    parser.add_argument('--k_pm25', type=int, default=1, help="k-neighbors for PM2.5 neighbor feature engineering")
 
     # STGNN args
     parser.add_argument('--epochs', type=int, default=100, help="Number of epochs for STGNN")
